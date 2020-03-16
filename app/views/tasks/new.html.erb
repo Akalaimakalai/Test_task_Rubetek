@@ -1,0 +1,18 @@
+<h1>Create new task</h1>
+
+<%= form_with model: @task, local: true do |form| %>
+  <div>
+    <%= render "shared/error_messages", resource: @task %>
+  </div>
+  <p>
+    <%= form.label :complexity %>:
+    <%= form.number_field :complexity %>
+  </p>
+
+  <p>
+    <%= form.label :priority %>:
+    <%= form.number_field :priority %>
+  </p>
+
+  <p><%= form.submit %></p>
+<% end %>

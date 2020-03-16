@@ -1,0 +1,51 @@
+version: '3'
+services:
+  postgres:
+    image: 'postgres:11.4-alpine'
+    container_name: 'rubetek-postgres'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  redis:
+    image: 'redis:5.0.7'
+    container_name: 'rubetek-redis'
+    volumes:
+      - redis:/data
+
+  sidekiq:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: 'rubetek-sidekiq'
+    restart: always
+    command: bundle exec sidekiq -q default -c 1
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432
+      - REDIS_URL=redis://redis:6379/
+    depends_on:
+      - postgres
+      - redis
+
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: 'rubetek-app'
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+      - redis
+      - sidekiq
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432
+      - REDIS_URL=redis://redis:6379/
+    restart: always
+    command: >
+      bash -c "bundle exec rails db:create
+      && bundle exec rails db:migrate
+      && bundle exec rails server"
+
+volumes:
+  postgres:
+  redis:
