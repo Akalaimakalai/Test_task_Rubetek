@@ -39,7 +39,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # === MY GEMS ===
 
 # Sidekiq is a full-featured background processing framework for Ruby. Work with ActiveJob
-gem 'sidekiq', '< 6'
+gem 'sidekiq', '< 7'
 
 # ---END---
 
